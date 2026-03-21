@@ -15,7 +15,6 @@
       --terra:  #C96A2B;
       --cream:  #F0E6D0;
       --muted:  #7A6A58;
-      --dim:    #3A2810;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,7 +33,6 @@
       padding: 3rem 1.5rem 2rem;
       border-bottom: 1px solid var(--border);
     }
-
     header::before {
       content: '';
       position: absolute;
@@ -42,7 +40,6 @@
       width: 4px;
       background: var(--terra);
     }
-
     .eyebrow {
       font-family: 'DM Mono', monospace;
       font-size: 0.6rem;
@@ -51,7 +48,6 @@
       text-transform: uppercase;
       margin-bottom: 0.8rem;
     }
-
     h1 {
       font-family: 'Playfair Display', serif;
       font-weight: 900;
@@ -60,7 +56,6 @@
       color: var(--cream);
       margin-bottom: 0.5rem;
     }
-
     h1 em {
       font-weight: 400;
       font-style: italic;
@@ -69,7 +64,6 @@
       color: var(--terra);
       margin-bottom: 0.15em;
     }
-
     .header-note {
       font-size: 0.82rem;
       color: var(--muted);
@@ -77,21 +71,92 @@
       margin-top: 0.6rem;
     }
 
+    /* ── Search & filters ────────────────────────── */
+    .controls {
+      padding: 1rem 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 0.8rem;
+    }
+
+    #search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.7rem 0.75rem 0.7rem 2.2rem;
+      font-family: 'Lora', serif;
+      font-size: 0.9rem;
+      color: var(--cream);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #search-input::placeholder { color: var(--muted); }
+    #search-input:focus { border-color: var(--terra); }
+
+    .filter-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      align-self: center;
+      margin-right: 0.2rem;
+    }
+
+    .filter-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.7rem;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: color 0.18s, border-color 0.18s, background 0.18s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .filter-btn:hover   { color: var(--cream); border-color: var(--muted); }
+    .filter-btn.active  { color: var(--bg); background: var(--terra); border-color: var(--terra); }
+
     /* ── Recipe grid ─────────────────────────────── */
     .grid {
-      padding: 1.5rem;
+      padding: 1.2rem 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
     }
 
-    .section-label {
+    .result-count {
       font-family: 'DM Mono', monospace;
       font-size: 0.6rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--terra);
-      margin-bottom: 0.2rem;
       padding-bottom: 0.5rem;
       border-bottom: 1px solid var(--border);
     }
@@ -108,15 +173,9 @@
       transition: border-color 0.2s, background 0.2s;
       -webkit-tap-highlight-color: transparent;
     }
-
-    a.card:active,
-    a.card:hover {
-      border-color: var(--terra);
-      background: #241a0e;
-    }
-
+    a.card:active, a.card:hover { border-color: var(--terra); background: #241a0e; }
     a.card::after {
-      content: '→';
+      content: '\2192';
       position: absolute;
       right: 1rem;
       top: 50%;
@@ -125,6 +184,7 @@
       font-size: 1.2rem;
       color: var(--terra);
     }
+    a.card.hidden { display: none; }
 
     .card-method {
       font-family: 'DM Mono', monospace;
@@ -134,7 +194,6 @@
       color: var(--terra);
       margin-bottom: 0.45rem;
     }
-
     .card-title {
       font-family: 'Playfair Display', serif;
       font-size: 1.25rem;
@@ -144,39 +203,28 @@
       margin-bottom: 0.8rem;
       padding-right: 2rem;
     }
+    .card-stats { display: flex; gap: 1.5rem; }
+    .card-stat  { display: flex; flex-direction: column; gap: 0.1rem; }
+    .stat-val   { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 0.95rem; color: var(--terra); }
+    .stat-lbl   { font-family: 'DM Mono', monospace; font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 
-    .card-stats {
-      display: flex;
-      gap: 1.5rem;
+    /* ── Empty state ─────────────────────────────── */
+    .empty-state {
+      display: none;
+      padding: 2rem 0;
+      text-align: center;
     }
-
-    .card-stat {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-    }
-
-    .stat-val {
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--terra);
-    }
-
-    .stat-lbl {
+    .empty-state.visible { display: block; }
+    .empty-state p {
       font-family: 'DM Mono', monospace;
-      font-size: 0.52rem;
+      font-size: 0.65rem;
       letter-spacing: 0.1em;
-      text-transform: uppercase;
       color: var(--muted);
+      text-transform: uppercase;
     }
 
     /* ── Footer ──────────────────────────────────── */
-    footer {
-      padding: 0 1.5rem;
-      margin-top: 1rem;
-    }
-
+    footer { padding: 0 1.5rem; margin-top: 1rem; }
     .footer-note {
       font-family: 'DM Mono', monospace;
       font-size: 0.6rem;
@@ -191,57 +239,98 @@
 <body>
 
   <header>
-    <p class="eyebrow">Batch Cooking · High Protein</p>
+    <p class="eyebrow">Batch Cooking &middot; High Protein</p>
     <h1><em>Eduardo's</em>Recipes</h1>
     <p class="header-note">Tap a recipe to open its shopping list and cooking guide.</p>
   </header>
 
-  <main class="grid">
-    <p class="section-label">Available Recipes</p>
+  <!-- Search & filters -->
+  <div class="controls">
+    <div class="search-wrap">
+      <span class="search-icon">&#9906;</span>
+      <input id="search-input" type="search" placeholder="Search recipes&hellip;" autocomplete="off" oninput="applyFilters()" />
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">Protein</span>
+      <button class="filter-btn active" data-min="0"  data-max="999" onclick="setFilter(this)">All</button>
+      <button class="filter-btn"        data-min="38" data-max="41"  onclick="setFilter(this)">38&ndash;41 g</button>
+      <button class="filter-btn"        data-min="42" data-max="45"  onclick="setFilter(this)">42&ndash;45 g</button>
+      <button class="filter-btn"        data-min="46" data-max="999" onclick="setFilter(this)">46 g+</button>
+    </div>
+  </div>
 
-    <a class="card" href="chicken-lentil-stew.html">
+  <main class="grid">
+    <p class="result-count" id="result-count">2 recipes</p>
+
+    <!-- data-protein = numeric protein value per portion -->
+    <a class="card" href="chicken-lentil-stew.html" data-protein="42">
       <p class="card-method">Slow Cooker</p>
-      <p class="card-title">Chicken & Lentil Stew</p>
+      <p class="card-title">Chicken &amp; Lentil Stew</p>
       <div class="card-stats">
-        <div class="card-stat">
-          <span class="stat-val">~42 g</span>
-          <span class="stat-lbl">Protein / Portion</span>
-        </div>
-        <div class="card-stat">
-          <span class="stat-val">6–8 hrs</span>
-          <span class="stat-lbl">Cook Time</span>
-        </div>
-        <div class="card-stat">
-          <span class="stat-val">6</span>
-          <span class="stat-lbl">Default Portions</span>
-        </div>
+        <div class="card-stat"><span class="stat-val">~42 g</span><span class="stat-lbl">Protein / Portion</span></div>
+        <div class="card-stat"><span class="stat-val">6&ndash;8 hrs</span><span class="stat-lbl">Cook Time</span></div>
+        <div class="card-stat"><span class="stat-val">6</span><span class="stat-lbl">Default Portions</span></div>
       </div>
     </a>
 
-    <a class="card" href="tomato-basil-chicken-rice.html">
+    <a class="card" href="tomato-basil-chicken-rice.html" data-protein="45">
       <p class="card-method">Slow Cooker</p>
       <p class="card-title">Tomato Basil Chicken &amp; Brown Rice</p>
       <div class="card-stats">
-        <div class="card-stat">
-          <span class="stat-val">~45 g</span>
-          <span class="stat-lbl">Protein / Portion</span>
-        </div>
-        <div class="card-stat">
-          <span class="stat-val">6&ndash;7 hrs</span>
-          <span class="stat-lbl">Cook Time</span>
-        </div>
-        <div class="card-stat">
-          <span class="stat-val">6</span>
-          <span class="stat-lbl">Default Portions</span>
-        </div>
+        <div class="card-stat"><span class="stat-val">~45 g</span><span class="stat-lbl">Protein / Portion</span></div>
+        <div class="card-stat"><span class="stat-val">6&ndash;7 hrs</span><span class="stat-lbl">Cook Time</span></div>
+        <div class="card-stat"><span class="stat-val">6</span><span class="stat-lbl">Default Portions</span></div>
       </div>
     </a>
 
+    <div class="empty-state" id="empty-state">
+      <p>No recipes match</p>
+    </div>
   </main>
 
   <footer>
     <p class="footer-note">More recipes added as pages are built</p>
   </footer>
+
+  <script>
+    var activeMin = 0;
+    var activeMax = 999;
+
+    function setFilter(btn) {
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeMin = parseInt(btn.dataset.min, 10);
+      activeMax = parseInt(btn.dataset.max, 10);
+      applyFilters();
+    }
+
+    function applyFilters() {
+      var query = document.getElementById('search-input').value.toLowerCase().trim();
+      var cards = document.querySelectorAll('a.card');
+      var visible = 0;
+
+      cards.forEach(function(card) {
+        var protein = parseInt(card.dataset.protein, 10);
+        var title   = card.querySelector('.card-title').textContent.toLowerCase();
+        var method  = card.querySelector('.card-method').textContent.toLowerCase();
+
+        var matchesSearch  = query === '' || title.indexOf(query) !== -1 || method.indexOf(query) !== -1;
+        var matchesProtein = protein >= activeMin && protein <= activeMax;
+
+        if (matchesSearch && matchesProtein) {
+          card.classList.remove('hidden');
+          visible++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      var countEl = document.getElementById('result-count');
+      countEl.textContent = visible === 1 ? '1 recipe' : visible + ' recipes';
+
+      document.getElementById('empty-state').classList.toggle('visible', visible === 0);
+    }
+  </script>
 
 </body>
 </html>
