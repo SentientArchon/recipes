@@ -250,20 +250,16 @@
       <span class="search-icon">&#9906;</span>
       <input id="search-input" type="search" placeholder="Search recipes&hellip;" autocomplete="off" oninput="applyFilters()" />
     </div>
-    <div class="filter-row">
-      <span class="filter-label">Protein</span>
-      <button class="filter-btn active" data-min="0"  data-max="999" onclick="setFilter(this)">All</button>
-      <button class="filter-btn"        data-min="38" data-max="41"  onclick="setFilter(this)">38&ndash;41 g</button>
-      <button class="filter-btn"        data-min="42" data-max="45"  onclick="setFilter(this)">42&ndash;45 g</button>
-      <button class="filter-btn"        data-min="46" data-max="999" onclick="setFilter(this)">46 g+</button>
+    <div class="filter-row" id="filter-row">
+      <!-- buttons injected by JS based on what types exist in the cards -->
     </div>
   </div>
 
   <main class="grid">
     <p class="result-count" id="result-count">2 recipes</p>
 
-    <!-- data-protein = numeric protein value per portion -->
-    <a class="card" href="chicken-lentil-stew.html" data-protein="42">
+    <!-- data-types = comma-separated protein types: chicken, beef, seafood, eggs, powdered -->
+    <a class="card" href="chicken-lentil-stew.html" data-types="chicken">
       <p class="card-method">Slow Cooker</p>
       <p class="card-title">Chicken &amp; Lentil Stew</p>
       <div class="card-stats">
@@ -273,7 +269,7 @@
       </div>
     </a>
 
-    <a class="card" href="tomato-basil-chicken-rice.html" data-protein="45">
+    <a class="card" href="tomato-basil-chicken-rice.html" data-types="chicken">
       <p class="card-method">Slow Cooker</p>
       <p class="card-title">Tomato Basil Chicken &amp; Brown Rice</p>
       <div class="card-stats">
@@ -293,14 +289,64 @@
   </footer>
 
   <script>
-    var activeMin = 0;
-    var activeMax = 999;
+    // Canonical label for each type key
+    var TYPE_LABELS = {
+      chicken:  'Chicken',
+      beef:     'Beef',
+      seafood:  'Seafood',
+      eggs:     'Eggs',
+      powdered: 'Powdered',
+    };
+
+    var activeType = 'all';
+
+    // Build filter buttons from types that actually exist in the cards
+    function buildFilters() {
+      var cards    = document.querySelectorAll('a.card');
+      var found    = {};
+
+      cards.forEach(function(card) {
+        var types = (card.dataset.types || '').split(',');
+        types.forEach(function(t) {
+          var key = t.trim().toLowerCase();
+          if (key) found[key] = true;
+        });
+      });
+
+      var row = document.getElementById('filter-row');
+      while (row.firstChild) { row.removeChild(row.firstChild); }
+
+      // Label
+      var label = document.createElement('span');
+      label.className = 'filter-label';
+      label.textContent = 'Protein';
+      row.appendChild(label);
+
+      // "All" button always present
+      var allBtn = document.createElement('button');
+      allBtn.className = 'filter-btn active';
+      allBtn.dataset.type = 'all';
+      allBtn.textContent = 'All';
+      allBtn.addEventListener('click', function() { setFilter(allBtn); });
+      row.appendChild(allBtn);
+
+      // One button per type present, in canonical order
+      var order = ['chicken', 'beef', 'seafood', 'eggs', 'powdered'];
+      order.forEach(function(key) {
+        if (!found[key]) return;
+        var btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.dataset.type = key;
+        btn.textContent = TYPE_LABELS[key] || key;
+        btn.addEventListener('click', function() { setFilter(btn); });
+        row.appendChild(btn);
+      });
+    }
 
     function setFilter(btn) {
       document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      activeMin = parseInt(btn.dataset.min, 10);
-      activeMax = parseInt(btn.dataset.max, 10);
+      activeType = btn.dataset.type;
       applyFilters();
     }
 
@@ -310,14 +356,14 @@
       var visible = 0;
 
       cards.forEach(function(card) {
-        var protein = parseInt(card.dataset.protein, 10);
-        var title   = card.querySelector('.card-title').textContent.toLowerCase();
-        var method  = card.querySelector('.card-method').textContent.toLowerCase();
+        var types  = (card.dataset.types || '').split(',').map(function(t) { return t.trim().toLowerCase(); });
+        var title  = card.querySelector('.card-title').textContent.toLowerCase();
+        var method = card.querySelector('.card-method').textContent.toLowerCase();
 
-        var matchesSearch  = query === '' || title.indexOf(query) !== -1 || method.indexOf(query) !== -1;
-        var matchesProtein = protein >= activeMin && protein <= activeMax;
+        var matchesSearch = query === '' || title.indexOf(query) !== -1 || method.indexOf(query) !== -1;
+        var matchesType   = activeType === 'all' || types.indexOf(activeType) !== -1;
 
-        if (matchesSearch && matchesProtein) {
+        if (matchesSearch && matchesType) {
           card.classList.remove('hidden');
           visible++;
         } else {
@@ -327,9 +373,10 @@
 
       var countEl = document.getElementById('result-count');
       countEl.textContent = visible === 1 ? '1 recipe' : visible + ' recipes';
-
       document.getElementById('empty-state').classList.toggle('visible', visible === 0);
     }
+
+    buildFilters();
   </script>
 
 </body>
