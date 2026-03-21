@@ -441,11 +441,11 @@
       var whole = Math.floor(n);
       var remainder = n - whole;
       var q = Math.round(remainder * 4);
-      var fracChars = ['\u00BC', '\u00BD', '\u00BE']; // ¼ ½ ¾
-      if (q === 0) return String(whole || '\u00BC');
+      var fracStr = ['1/4', '1/2', '3/4'];
+      if (q === 0) return String(whole || '1/4');
       if (q === 4) return String(whole + 1);
-      var f = fracChars[q - 1];
-      return whole > 0 ? (whole + f) : f;
+      var f = fracStr[q - 1];
+      return whole > 0 ? (whole + ' ' + f) : f;
     }
 
     // ── Quantity formatter ─────────────────────────────────────
