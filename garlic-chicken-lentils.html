@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Garlic Chicken &amp; Lentils</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #16100A;
+      --surface:  #1F1610;
+      --border:   #2E2015;
+      --terra:    #C96A2B;
+      --terra-dk: #9C4E1A;
+      --cream:    #F0E6D0;
+      --muted:    #7A6A58;
+      --sage:     #4A6B48;
+      --checked:  #2A1E0E;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Lora', Georgia, serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+    .back-nav { padding: 0.9rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .back-nav a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--terra);
+      text-decoration: none;
+    }
+    .back-nav a:active { opacity: 0.6; }
+    header {
+      position: relative;
+      padding: 1.8rem 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--terra);
+    }
+    .badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--terra);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 0.7rem;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: clamp(2rem, 7.5vw, 3rem);
+      line-height: 1.05;
+      color: var(--cream);
+      margin-bottom: 0.15rem;
+    }
+    h1 span { font-style: normal; font-weight: 900; display: block; }
+    .subtitle {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--terra);
+      margin-bottom: 1.2rem;
+    }
+    .stats { display: flex; gap: 1.6rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+    .stat { display: flex; flex-direction: column; gap: 0.1rem; }
+    .stat-val {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--terra);
+    }
+    .stat-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.52rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .portion-row {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+      width: fit-content;
+    }
+    .portion-btn {
+      background: none;
+      border: none;
+      color: var(--terra);
+      font-size: 1.2rem;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .portion-btn:active { background: var(--border); }
+    .portion-btn:disabled { color: var(--muted); cursor: default; }
+    .portion-display {
+      padding: 0 0.8rem;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+    .portion-num {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--cream);
+      display: block;
+      line-height: 1.2;
+    }
+    .portion-word {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 0.9rem 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn.active { color: var(--terra); border-bottom-color: var(--terra); }
+    .panel { display: none; padding: 1.4rem 1.5rem; }
+    .panel.active { display: block; }
+    .section-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--terra);
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    .controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+    }
+    .reset-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.65rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .reset-btn:active { color: var(--cream); border-color: var(--muted); }
+    .progress-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--muted);
+    }
+    .progress-track {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--terra);
+      border-radius: 1px;
+      transition: width 0.35s ease;
+    }
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 0.1rem; }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.9rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.18s;
+      border: 1px solid transparent;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .check-item:active, .check-item:hover { background: var(--surface); border-color: var(--border); }
+    .check-item.done { background: var(--checked); opacity: 0.5; }
+    .check-item.done .item-label { text-decoration: line-through; color: var(--muted); }
+    .check-item.done .item-qty   { color: var(--muted); }
+    .checkbox {
+      width: 22px; height: 22px;
+      border: 1.5px solid var(--terra-dk);
+      border-radius: 3px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .check-item.done .checkbox { background: var(--terra); border-color: var(--terra); }
+    .checkbox-icon { display: none; }
+    .check-item.done .checkbox-icon { display: block; }
+    .item-qty {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--terra);
+      min-width: 72px;
+      flex-shrink: 0;
+    }
+    .item-label { font-size: 0.93rem; color: var(--cream); line-height: 1.4; }
+    .steps { display: flex; flex-direction: column; gap: 0.4rem; }
+    .step-item {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      padding: 1rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.18s;
+      border: 1px solid transparent;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .step-item:active, .step-item:hover { background: var(--surface); border-color: var(--border); }
+    .step-item.done { background: var(--checked); opacity: 0.45; }
+    .step-item.done .step-text { text-decoration: line-through; color: var(--muted); }
+    .step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--terra-dk);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--cream);
+      flex-shrink: 0;
+      transition: background 0.18s;
+    }
+    .step-item.done .step-num { background: var(--muted); }
+    .step-text { font-size: 0.93rem; color: var(--cream); line-height: 1.65; padding-top: 0.3rem; }
+    .step-emphasis { color: var(--terra); font-weight: 600; }
+    .note-card {
+      margin-top: 1.8rem;
+      background: var(--surface);
+      border-left: 3px solid var(--terra);
+      padding: 1rem;
+      border-radius: 0 4px 4px 0;
+    }
+    .note-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.56rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 0.45rem;
+    }
+    .note-text { font-size: 0.83rem; color: var(--muted); line-height: 1.75; font-style: italic; }
+    .done-banner {
+      display: none;
+      margin-top: 1.2rem;
+      padding: 0.9rem;
+      background: var(--sage);
+      border-radius: 4px;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cream);
+    }
+    .done-banner.visible { display: block; }
+  </style>
+</head>
+<body>
+
+  <div class="back-nav"><a href="index.html">&larr; All Recipes</a></div>
+
+  <header>
+    <p class="badge">Slow Cooker &middot; Batch Meal</p>
+    <h1>
+      <em style="font-size:0.58em;font-weight:400;font-style:italic;">Garlic</em>
+      <span>Chicken</span>
+    </h1>
+    <p class="subtitle">&amp; Lentils</p>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-val">~43 g</span>
+        <span class="stat-lbl">Protein / Portion</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">4&ndash;6 hrs</span>
+        <span class="stat-lbl">Cook Time</span>
+      </div>
+    </div>
+
+    <div class="portion-row">
+      <button class="portion-btn" id="btn-minus" onclick="changePortion(-1)" aria-label="Fewer portions">&minus;</button>
+      <div class="portion-display">
+        <span class="portion-num" id="portion-num">6</span>
+        <span class="portion-word">portions</span>
+      </div>
+      <button class="portion-btn" id="btn-plus" onclick="changePortion(1)" aria-label="More portions">+</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" onclick="switchTab('shopping', this)">Shopping List</button>
+    <button class="tab-btn" onclick="switchTab('cooking', this)">Cooking Steps</button>
+  </nav>
+
+  <div id="panel-shopping" class="panel active">
+    <div class="section-title">Ingredients</div>
+    <div class="controls-row">
+      <button class="reset-btn" onclick="resetList('shopping')">Clear All</button>
+      <span class="progress-meta" id="shop-count"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="shop-bar" style="width:0%"></div></div>
+    <ul class="checklist" id="shopping-list"></ul>
+    <div class="done-banner" id="shop-done">All items collected &mdash; you&rsquo;re ready to cook</div>
+  </div>
+
+  <div id="panel-cooking" class="panel">
+    <div class="section-title">Method</div>
+    <div class="controls-row">
+      <button class="reset-btn" onclick="resetList('cooking')">Reset Steps</button>
+      <span class="progress-meta" id="cook-count"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="cook-bar" style="width:0%"></div></div>
+    <div class="steps" id="cooking-steps"></div>
+
+    <div class="note-card">
+      <div class="note-label">Nutrition Note</div>
+      <p class="note-text">
+        Green lentils have a glycemic index of ~32 &mdash; one of the lowest of any carb source &mdash; releasing glucose slowly and directly blunting post-meal blood sugar spikes, which is critical for managing insulin resistance. Two cups of lentils pushes fiber to ~7 g per portion and adds substantial plant protein alongside the chicken. The orange juice is negligible per serving (about 1 1/2 tsp) &mdash; the fructose impact is minimal, and the vitamin C boosts iron absorption from the lentils. The avocado-yogurt topping adds monounsaturated fat, which slows gastric emptying and further reduces the glycemic response.
+      </p>
+    </div>
+
+    <div class="done-banner" id="cook-done">All steps complete &mdash; enjoy your meal</div>
+  </div>
+
+  <script>
+    var SLUG      = 'gcl';
+    var BASE_PORT = 6;
+    var MIN_PORT  = 1;
+    var MAX_PORT  = 12;
+
+    var INGREDIENTS = [
+      { id: 's0',  base: 1.5,  unit: 'lbs',   label: 'boneless skinless chicken breasts' },
+      { id: 's1',  base: 2,    unit: 'cups',  label: 'green lentils, rinsed' },
+      { id: 's2',  base: 2.5,  unit: 'cups',  label: 'low-sodium chicken broth' },
+      { id: 's3',  base: 3,    unit: 'tbsp',  label: 'extra-virgin olive oil' },
+      { id: 's4',  base: 1,    unit: 'tbsp',  label: 'butter or ghee, melted' },
+      { id: 's5',  base: 0.25, unit: 'cups',  label: 'sweet onion, finely chopped' },
+      { id: 's6',  base: 0.5,  unit: 'cups',  label: 'fresh basil leaves, packed' },
+      { id: 's7',  base: 3,    unit: 'count', label: 'fresh mint leaves' },
+      { id: 's8',  base: 4,    unit: 'count', label: 'garlic cloves, peeled' },
+      { id: 's9',  base: 0.25, unit: 'cups',  label: 'fresh orange juice (about 1 orange)' },
+      { id: 's10', base: 0.5,  unit: 'tsp',   label: 'chili pepper seasoning' },
+      { id: 's11', base: 0.5,  unit: 'tsp',   label: 'smoked paprika' },
+      { id: 's12', base: 0.5,  unit: 'tsp',   label: 'sea salt' },
+      { id: 's13', base: 0.5,  unit: 'tsp',   label: 'black pepper' },
+      { id: 's14', base: 1,    unit: 'count', label: 'avocado (optional topping)' },
+      { id: 's15', base: 0.25, unit: 'cups',  label: 'plain full-fat yogurt (optional topping)' },
+    ];
+
+    var STEPS = [
+      { id: 'c0', segments: [
+        { text: 'Rinse the lentils thoroughly under cold water until the water runs clear. Pat the chicken breasts dry with paper towels.' }
+      ]},
+      { id: 'c1', segments: [
+        { text: 'Blend the basil, mint, garlic, olive oil, onion, orange juice, chili seasoning, paprika, salt, and pepper into a smooth green sauce. A blender or small food processor works best \u2014 blend until fully smooth and pourable, about 30 seconds.' }
+      ]},
+      { id: 'c2', segments: [
+        { text: 'Pour the broth and melted butter into the slow cooker. Add the rinsed lentils and stir to distribute evenly across the bottom.' }
+      ]},
+      { id: 'c3', segments: [
+        { text: 'Lay the chicken breasts on top of the lentils in a single layer. They do not need to be submerged \u2014 the steam will cook them through.' }
+      ]},
+      { id: 'c4', segments: [
+        { text: 'Pour the green sauce over the chicken, spreading it to coat. Cook on ' },
+        { text: 'LOW for 4\u20136 hours', emphasis: true },
+        { text: ' or ' },
+        { text: 'HIGH for 3 hours', emphasis: true },
+        { text: '. Do not lift the lid during cooking. Chicken is done when it reaches 165\u00b0F or pulls apart easily with a fork.' }
+      ]},
+      { id: 'c5', segments: [
+        { text: 'Shred the chicken directly in the slow cooker using two forks \u2014 it should fall apart with minimal effort. Stir the shredded meat into the lentils and sauce until evenly combined.' }
+      ]},
+      { id: 'c6', segments: [
+        { text: 'If using the topping, mash or blend the avocado with the yogurt until smooth. Serve each bowl with a generous spoonful of the avocado-yogurt on top.' }
+      ]},
+    ];
+
+    // ── Fraction formatter ─────────────────────────────────────
+    function frac(n) {
+      if (n <= 0) return '0';
+      var whole = Math.floor(n);
+      var remainder = n - whole;
+      var q = Math.round(remainder * 4);
+      var fracStr = ['1/4', '1/2', '3/4'];
+      if (q === 0) return String(whole || '1/4');
+      if (q === 4) return String(whole + 1);
+      var f = fracStr[q - 1];
+      return whole > 0 ? (whole + ' ' + f) : f;
+    }
+
+    // ── Quantity formatter ─────────────────────────────────────
+    function formatQty(base, unit, portions) {
+      if (unit === 'taste') return 'to taste';
+      var scale  = portions / BASE_PORT;
+      var scaled = base * scale;
+      if (unit === 'count') return String(Math.max(1, Math.round(scaled)));
+      if (unit === 'tsp' && scaled >= 3) return frac(scaled / 3) + ' tbsp';
+      var suffix = {
+        lbs:  scaled <= 1 ? 'lb'  : 'lbs',
+        cups: scaled <= 1 ? 'cup' : 'cups',
+        tsp:  'tsp',
+        oz:   'oz',
+        tbsp: 'tbsp',
+      };
+      return frac(scaled) + ' ' + (suffix[unit] || unit);
+    }
+
+    // ── Storage helpers ────────────────────────────────────────
+    function portionKey() { return SLUG + '_portions'; }
+    function shopKey()    { return SLUG + '_shop'; }
+    function cookKey()    { return SLUG + '_cook'; }
+
+    function getPortions() {
+      var stored = parseInt(localStorage.getItem(portionKey()), 10);
+      return (stored >= MIN_PORT && stored <= MAX_PORT) ? stored : BASE_PORT;
+    }
+    function savePortions(n) { localStorage.setItem(portionKey(), String(n)); }
+
+    function getChecked(key) {
+      try { return JSON.parse(localStorage.getItem(key)) || {}; }
+      catch (e) { return {}; }
+    }
+    function saveChecked(key, obj) { localStorage.setItem(key, JSON.stringify(obj)); }
+
+    // ── Build SVG checkmark (no innerHTML) ────────────────────
+    function makeCheckmark() {
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'checkbox-icon');
+      svg.setAttribute('width', '12');
+      svg.setAttribute('height', '10');
+      svg.setAttribute('viewBox', '0 0 12 10');
+      svg.setAttribute('fill', 'none');
+      var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      poly.setAttribute('points', '1,5 4.5,8.5 11,1');
+      poly.setAttribute('stroke', '#16100A');
+      poly.setAttribute('stroke-width', '2.2');
+      poly.setAttribute('stroke-linecap', 'round');
+      poly.setAttribute('stroke-linejoin', 'round');
+      svg.appendChild(poly);
+      return svg;
+    }
+
+    // ── Render shopping list ───────────────────────────────────
+    function renderShopping(portions) {
+      var checked = getChecked(shopKey());
+      var list = document.getElementById('shopping-list');
+      while (list.firstChild) { list.removeChild(list.firstChild); }
+
+      INGREDIENTS.forEach(function(ing) {
+        var done = !!checked[ing.id];
+        var qty  = formatQty(ing.base, ing.unit, portions);
+
+        var li  = document.createElement('li');
+        li.className = 'check-item' + (done ? ' done' : '');
+        li.dataset.id = ing.id;
+
+        var box = document.createElement('div');
+        box.className = 'checkbox';
+        box.appendChild(makeCheckmark());
+
+        var qtyEl = document.createElement('span');
+        qtyEl.className = 'item-qty';
+        qtyEl.textContent = qty;
+
+        var lbl = document.createElement('span');
+        lbl.className = 'item-label';
+        lbl.textContent = ing.label;
+
+        li.appendChild(box);
+        li.appendChild(qtyEl);
+        li.appendChild(lbl);
+
+        li.addEventListener('click', function() { toggleItem(li, 'shop'); });
+        list.appendChild(li);
+      });
+
+      updateProgress('shopping');
+    }
+
+    // ── Render cooking steps ───────────────────────────────────
+    function renderCooking() {
+      var checked   = getChecked(cookKey());
+      var container = document.getElementById('cooking-steps');
+      while (container.firstChild) { container.removeChild(container.firstChild); }
+
+      STEPS.forEach(function(step, i) {
+        var done = !!checked[step.id];
+
+        var div = document.createElement('div');
+        div.className = 'step-item' + (done ? ' done' : '');
+        div.dataset.id = step.id;
+
+        var numEl = document.createElement('div');
+        numEl.className = 'step-num';
+        numEl.textContent = String(i + 1);
+
+        var pEl = document.createElement('p');
+        pEl.className = 'step-text';
+
+        step.segments.forEach(function(seg) {
+          if (seg.emphasis) {
+            var strong = document.createElement('strong');
+            strong.className = 'step-emphasis';
+            strong.textContent = seg.text;
+            pEl.appendChild(strong);
+          } else {
+            pEl.appendChild(document.createTextNode(seg.text));
+          }
+        });
+
+        div.appendChild(numEl);
+        div.appendChild(pEl);
+        div.addEventListener('click', function() { toggleItem(div, 'cook'); });
+        container.appendChild(div);
+      });
+
+      updateProgress('cooking');
+    }
+
+    // ── Toggle item ────────────────────────────────────────────
+    function toggleItem(el, type) {
+      var key     = type === 'shop' ? shopKey() : cookKey();
+      var checked = getChecked(key);
+      var id      = el.dataset.id;
+      checked[id] = !checked[id];
+      saveChecked(key, checked);
+      el.classList.toggle('done', !!checked[id]);
+      updateProgress(type === 'shop' ? 'shopping' : 'cooking');
+    }
+
+    // ── Progress bar ───────────────────────────────────────────
+    function updateProgress(type) {
+      var isShopping = type === 'shopping';
+      var selector   = isShopping ? '#shopping-list .check-item' : '#cooking-steps .step-item';
+      var items  = document.querySelectorAll(selector);
+      var total  = items.length;
+      var done   = 0;
+      items.forEach(function(el) { if (el.classList.contains('done')) done++; });
+      var pct = total ? Math.round((done / total) * 100) : 0;
+
+      if (isShopping) {
+        document.getElementById('shop-count').textContent = done + ' of ' + total + ' collected';
+        document.getElementById('shop-bar').style.width   = pct + '%';
+        document.getElementById('shop-done').classList.toggle('visible', done === total);
+      } else {
+        document.getElementById('cook-count').textContent = done + ' of ' + total + ' steps done';
+        document.getElementById('cook-bar').style.width   = pct + '%';
+        document.getElementById('cook-done').classList.toggle('visible', done === total);
+      }
+    }
+
+    // ── Reset list ─────────────────────────────────────────────
+    function resetList(type) {
+      var key = type === 'shopping' ? shopKey() : cookKey();
+      saveChecked(key, {});
+      if (type === 'shopping') renderShopping(getPortions());
+      else renderCooking();
+    }
+
+    // ── Portion controls ───────────────────────────────────────
+    function changePortion(delta) {
+      var p = Math.min(MAX_PORT, Math.max(MIN_PORT, getPortions() + delta));
+      savePortions(p);
+      saveChecked(shopKey(), {});
+      saveChecked(cookKey(), {});
+      applyPortions(p);
+    }
+
+    function applyPortions(p) {
+      document.getElementById('portion-num').textContent    = String(p);
+      document.getElementById('btn-minus').disabled = p <= MIN_PORT;
+      document.getElementById('btn-plus').disabled  = p >= MAX_PORT;
+      renderShopping(p);
+      renderCooking();
+    }
+
+    // ── Tab switching ──────────────────────────────────────────
+    function switchTab(name, btn) {
+      document.querySelectorAll('.panel').forEach(function(el)   { el.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById('panel-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ── Init ───────────────────────────────────────────────────
+    applyPortions(getPortions());
+  </script>
+</body>
+</html>
